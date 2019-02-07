@@ -3,3 +3,5 @@
 ################################################################################
 
 /.vscode
+/Source/.vs/TeaCommerce.PaymentProviders
+/Source/packages

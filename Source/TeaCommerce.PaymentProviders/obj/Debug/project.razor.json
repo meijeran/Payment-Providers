@@ -1,0 +1,14 @@
+{
+  "ProjectFilePath": "d:\\GIT\\Repos\\TeaCommerce\\Payment-Providers\\Source\\TeaCommerce.PaymentProviders\\TeaCommerce.PaymentProviders.csproj",
+  "TargetFramework": "v4.0",
+  "TagHelpers": [],
+  "Configuration": {
+    "ConfigurationName": "UnsupportedRazor",
+    "LanguageVersion": "1.0",
+    "Extensions": [
+      {
+        "ExtensionName": "UnsupportedRazorExtension"
+      }
+    ]
+  }
+}
