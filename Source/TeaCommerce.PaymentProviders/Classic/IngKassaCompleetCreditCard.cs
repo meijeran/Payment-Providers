@@ -128,8 +128,8 @@ namespace TeaCommerce.PaymentProviders.Classic
                     callbackInfo.PaymentState = PaymentState.PendingExternalSystem;
                 }
                 if(transaction.status == "completed")
-                {
-                    order.Finalize(order.PaymentInformation.TotalPrice.WithVat, paymentResult.id,PaymentState.Captured);
+                {                    
+                    order.Finalize(order.TotalPrice.WithVat, paymentResult.id,PaymentState.Captured);
                     callbackInfo.PaymentState = PaymentState.Captured;
                 }                
             }
