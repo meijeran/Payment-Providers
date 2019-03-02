@@ -80,15 +80,8 @@ namespace TeaCommerce.PaymentProviders.Classic
             form.InputFields["cancelurl"] = teaCommerceCancelUrl;
             form.InputFields["callbackurl"] = teaCommerceCallBackUrl;
 
-           
-            
-            //form.Attributes.Add(fields);
-
             form.InputFields.Add(fields);
-
-
-            order.TransactionInformation.TransactionId = PaymentResult.id;
-            
+            order.TransactionInformation.TransactionId = PaymentResult.id;           
             
             form.Action = transaction.payment_url;            
             form.Method = HtmlFormMethodAttribute.Get;

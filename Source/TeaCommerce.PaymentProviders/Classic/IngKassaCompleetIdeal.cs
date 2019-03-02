@@ -168,8 +168,7 @@ namespace TeaCommerce.PaymentProviders.Classic
 
             var authValue = new AuthenticationHeaderValue("Basic", encoded);
             client.DefaultRequestHeaders.Authorization = authValue;
-            //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic",encoded);
-
+          
             return client;
         }
 
