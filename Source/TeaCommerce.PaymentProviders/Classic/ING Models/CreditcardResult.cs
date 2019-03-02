@@ -3,7 +3,7 @@ using System;
 
 namespace TeaCommerce.PaymentProviders.Classic
 {
-    internal class CreditcardResult
+    internal class PaymentResult
     {
         public int amount { get; set; }
         public ClientResult client { get; set; }

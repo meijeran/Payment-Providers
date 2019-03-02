@@ -4,10 +4,18 @@ using Newtonsoft.Json;
 namespace TeaCommerce.PaymentProviders.Classic
 {
     internal class IdealPayment : Payment
-    {     
-        [JsonProperty("issuer_id")]
-        public string IssuerId { get; set; }
+    {
+        private List<TransactionResul> idealTransactions = new List<TransactionResul>();
+        public override List<TransactionResul> PaymentType => idealTransactions;
 
-        public override List<TransactionResul> PaymentType => new List<TransactionResul> { new IdealTransaction() };
+        public void AddIssuer(string issuer)
+        {
+            var transactionDetails = new IdealTransaction
+            {
+                PaymentMethodDetails = new PaymentMethodDetailsResult { IssuerId = issuer }
+            };
+
+            idealTransactions.Add(transactionDetails);            
+        }
     }
 }

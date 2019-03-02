@@ -93,13 +93,14 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Classic\Axcess.cs" />
-    <Compile Include="Classic\IngKassaCompleet.cs" />
+    <Compile Include="Classic\IngKassaCompleetCreditCard.cs" />
     <Compile Include="Classic\ING Models\ClientResult.cs" />
     <Compile Include="Classic\ING Models\CreditCardPayment.cs" />
     <Compile Include="Classic\ING Models\CreditcardResult.cs" />
     <Compile Include="Classic\ING Models\EventResult.cs" />
     <Compile Include="Classic\ING Models\IdealPayment.cs" />
     <Compile Include="Classic\ING Models\IdealTransaction.cs" />
+    <Compile Include="Helpers\IdealIssuersHelper.cs" />
     <Compile Include="Inline\CyberSource.cs" />
     <Compile Include="Classic\PaymentSense.cs" />
     <Compile Include="Classic\Dibs.cs" />
@@ -114,6 +115,7 @@
     <Compile Include="Classic\ING Models\Payment.cs" />
     <Compile Include="Classic\ING Models\PaymentMethodDetail.cs" />
     <Compile Include="Classic\ING Models\PaymentMethodDetailsResult.cs" />
+    <Compile Include="Classic\IngKassaCompleetIdeal.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Classic\QuickPay.cs" />
     <Compile Include="Classic\SagePay.cs" />

@@ -18,16 +18,15 @@ namespace TeaCommerce.PaymentProviders.Classic
 {
 
     [PaymentProvider("ING Kassa Compleet CreditCard")]
-    public class KassaCompleet : APaymentProvider
+    public class IngKassaCompleetCreditCard : APaymentProvider
     {
-        private string apiUrl => DefaultSettings["apiUrl"];
         private IDictionary<string, string> CurrentSetting;
-        private CreditcardResult CreditcardResult;
+        private PaymentResult PaymentResult;
         private string continueUrl;
         private string callbackUrl;
-        public KassaCompleet()
+        public IngKassaCompleetCreditCard()
         {
-            CreditcardResult = null;
+            PaymentResult = null;
         }
 
         public override IDictionary<string, string> DefaultSettings
@@ -58,23 +57,23 @@ namespace TeaCommerce.PaymentProviders.Classic
 
 
             var form = new PaymentHtmlForm();            
-            if (CreditcardResult == null)
+            if (PaymentResult == null)
             {
-                var result = CreditCardPaymentAsync(order, url, key).Result;
-                CreditcardResult = result;
+                var result = PostCreditCardPayment(order, url, key).Result;
+                PaymentResult = result;
             }
 
-            if (CreditcardResult == null)
+            if (PaymentResult == null)
             {
                 LoggingService.Instance.Log("No valid result from ING kassa compleet");
                 return null;
             }
-            if (!CreditcardResult.transactions.Any()) {
+            if (!PaymentResult.transactions.Any()) {
                 LoggingService.Instance.Log("No valid response from ING kassa compleet");
                 return null;
             }
 
-            var transaction = CreditcardResult.transactions.FirstOrDefault();
+            var transaction = PaymentResult.transactions.FirstOrDefault();
             var fields = new KeyValuePair<string, string>(nameof(transaction.payment_method), transaction.payment_method);
 
             form.InputFields["continueurl"] = teaCommerceContinueUrl;
@@ -88,7 +87,7 @@ namespace TeaCommerce.PaymentProviders.Classic
             form.InputFields.Add(fields);
 
 
-            order.TransactionInformation.TransactionId = CreditcardResult.id;
+            order.TransactionInformation.TransactionId = PaymentResult.id;
             
             
             form.Action = transaction.payment_url;            
@@ -104,6 +103,8 @@ namespace TeaCommerce.PaymentProviders.Classic
 
         public override bool FinalizeAtContinueUrl => true;
 
+        public IDictionary<string, string> CurrentSetting1 { get => CurrentSetting; set => CurrentSetting = value; }
+
         public override string GetContinueUrl(Order order, IDictionary<string, string> settings)
         {
             return settings["returnUrl"];           
@@ -111,18 +112,29 @@ namespace TeaCommerce.PaymentProviders.Classic
 
         public override CallbackInfo ProcessCallback(Order order, HttpRequest request, IDictionary<string, string> settings)
         {
-            var price = order.TotalPrice.WithVat;
-            var finalize = this.FinalizeAtContinueUrl;
-            
-            //todo: check if payment was succesfull
-            
-            return new CallbackInfo(price, order.OrderNumber, PaymentState.Captured);
+            order.MustNotBeNull(nameof(order));
+            var orderId = request.QueryString["order_id"];
+            var key = settings["apiKey"]; 
+            var url = settings["apiUrl"];
 
-            //else
-            //throw exception
+            var paymentResult = GetPaymentInfo(orderId, url: url, key: key).GetAwaiter().GetResult();
+            var transactions = paymentResult?.transactions;
+            var callbackInfo = new CallbackInfo(order.PaymentInformation.TotalPrice.WithVat, paymentResult?.id, PaymentState.Error);
+            if (transactions != null && transactions.Any())
+            {
+                var transaction = transactions.FirstOrDefault();
+                if(transaction.status == "pending")
+                {
+                    callbackInfo.PaymentState = PaymentState.PendingExternalSystem;
+                }
+                if(transaction.status == "completed")
+                {
+                    order.Finalize(order.PaymentInformation.TotalPrice.WithVat, paymentResult.id,PaymentState.Captured);
+                    callbackInfo.PaymentState = PaymentState.Captured;
+                }                
+            }
 
-            
-            //throw new System.NotImplementedException();
+            return callbackInfo;
         }
 
         public override ApiInfo CapturePayment(Order order, IDictionary<string, string> settings)
@@ -130,13 +142,13 @@ namespace TeaCommerce.PaymentProviders.Classic
             return base.CapturePayment(order, settings);
         }
 
-        private async Task<CreditcardResult> CreditCardPaymentAsync(Order order, string url, string key)
+        private async Task<PaymentResult> PostCreditCardPayment(Order order, string url, string key)
         {
             var client = CreateClient(url, key);
             PaymentMethod paymentMethod = PaymentMethodService.Instance.Get(order.StoreId, order.PaymentInformation.PaymentMethodId.Value);
             var payment = new CreditCardPayment
             {
-                OrderId = "1",
+                OrderId = order.CartNumber,
                 Description = string.Join(",", order.OrderLines.Select(ol => ol.Name)),
                 TotalAmount = (int)order.TotalPrice.WithVat * 100,
                 ReturnUrl = continueUrl
@@ -156,7 +168,7 @@ namespace TeaCommerce.PaymentProviders.Classic
                     return null;
                 }
 
-                var creditcardResult = await JsonConvert.DeserializeObjectAsync<CreditcardResult>(response);
+                var creditcardResult = await JsonConvert.DeserializeObjectAsync<PaymentResult>(response);
 
                 if (creditcardResult != null)
                 {
@@ -193,11 +205,32 @@ namespace TeaCommerce.PaymentProviders.Classic
 
             ServicePointManager.SecurityProtocol = (SecurityProtocolType)(0xc0 | 0x300 | 0xc00);
 
-            var plain = Encoding.UTF8.GetBytes($"{apiKey}:{string.Empty}");
+            var plain = Encoding.UTF8.GetBytes($"{apiKey}:");
             var encoded = Convert.ToBase64String(plain);
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic",encoded);
+
+            var authValue = new AuthenticationHeaderValue("Basic", encoded);
+            client.DefaultRequestHeaders.Authorization = authValue;            
 
             return client;
+        }
+
+        private async Task<PaymentResult> GetPaymentInfo(string orderId, string url, string key)
+        {
+            var client = CreateClient(url, key);
+            var uri = new Uri($"{url}/v1/orders/{orderId}/");
+            
+            var responseMessage = await client.GetAsync(uri);
+
+            if(responseMessage.StatusCode == HttpStatusCode.OK)
+            {
+                var content = await responseMessage.Content.ReadAsStringAsync();
+                var result = await JsonConvert.DeserializeObjectAsync<PaymentResult>(content);
+
+                return result;
+            }
+
+            LoggingService.Instance.Log($"Error retrieving payment info. HttpStatusCode: {responseMessage.StatusCode.ToString()}");
+            return null;
         }
     }
 }
