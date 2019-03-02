@@ -1,12 +1,12 @@
 D:\GIT\Repos\TeaCommerce\Payment-Providers\Source\TeaCommerce.PaymentProviders\bin\Debug\TeaCommerce.PaymentProviders.dll
 D:\GIT\Repos\TeaCommerce\Payment-Providers\Source\TeaCommerce.PaymentProviders\bin\Debug\TeaCommerce.PaymentProviders.pdb
 D:\GIT\Repos\TeaCommerce\Payment-Providers\Source\TeaCommerce.PaymentProviders\bin\Debug\Stripe.net.dll
+C:\Users\Anne\Desktop\Explanar\explanar_2_2_2019\httpdocs\bin\TeaCommerce.PaymentProviders.dll.config
+C:\Users\Anne\Desktop\Explanar\explanar_2_2_2019\httpdocs\bin\TeaCommerce.PaymentProviders.dll
+C:\Users\Anne\Desktop\Explanar\explanar_2_2_2019\httpdocs\bin\TeaCommerce.PaymentProviders.pdb
+D:\GIT\Repos\TeaCommerce\Payment-Providers\Source\TeaCommerce.PaymentProviders\obj\Debug\TeaCommerce.PaymentProviders.csproj.App.config
 D:\GIT\Repos\TeaCommerce\Payment-Providers\Source\TeaCommerce.PaymentProviders\obj\Debug\TeaCommerce.PaymentProviders.csproj.CoreCompileInputs.cache
 D:\GIT\Repos\TeaCommerce\Payment-Providers\Source\TeaCommerce.PaymentProviders\obj\Debug\TeaCommerce.PaymentProviders.csproj.CopyComplete
 D:\GIT\Repos\TeaCommerce\Payment-Providers\Source\TeaCommerce.PaymentProviders\obj\Debug\TeaCommerce.PaymentProviders.dll
 D:\GIT\Repos\TeaCommerce\Payment-Providers\Source\TeaCommerce.PaymentProviders\obj\Debug\TeaCommerce.PaymentProviders.pdb
-C:\Users\Anne\Desktop\Explanar\explanar_2_2_2019\httpdocs\bin\TeaCommerce.PaymentProviders.dll
-C:\Users\Anne\Desktop\Explanar\explanar_2_2_2019\httpdocs\bin\TeaCommerce.PaymentProviders.pdb
-C:\Users\Anne\Desktop\Explanar\explanar_2_2_2019\httpdocs\bin\TeaCommerce.PaymentProviders.dll.config
-D:\GIT\Repos\TeaCommerce\Payment-Providers\Source\TeaCommerce.PaymentProviders\obj\Debug\TeaCommerce.PaymentProviders.csproj.App.config
 D:\GIT\Repos\TeaCommerce\Payment-Providers\Source\TeaCommerce.PaymentProviders\obj\Debug\TeaCommerce.PaymentProviders.csprojAssemblyReference.cache
