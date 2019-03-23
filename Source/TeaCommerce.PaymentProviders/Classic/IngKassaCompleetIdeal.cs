@@ -13,6 +13,7 @@ using TeaCommerce.Api.Infrastructure.Logging;
 using TeaCommerce.Api.Models;
 using TeaCommerce.Api.Services;
 using TeaCommerce.Api.Web.PaymentProviders;
+using TeaCommerce.PaymentProviders.Helpers;
 
 namespace TeaCommerce.PaymentProviders.Classic
 {
@@ -98,11 +99,24 @@ namespace TeaCommerce.PaymentProviders.Classic
         {
             var client = CreateClient(url, key);
             PaymentMethod paymentMethod = PaymentMethodService.Instance.Get(order.StoreId, order.PaymentInformation.PaymentMethodId.Value);
+
+            var currency = Api.Web.TeaCommerceHelper.GetCurrency(order.StoreId, order.CurrencyId);
+            var price = order.TotalPrice.WithVat;
+
+            if (currency.IsoCode != "EUR")
+            {
+                var converted = await CurrencyConverter.ToEuroAsync(currency.IsoCode, price);
+                price = converted.ConvertedAmount;
+            }
+
+            var p = price * 100;
+            int totalAmount = Convert.ToInt32(p);
+
             var payment = new IdealPayment
             {
                 OrderId = order.Id.ToString(),
                 Description = string.Join(",", order.OrderLines.Select(ol => ol.Name) ),
-                TotalAmount = (int)order.TotalPrice.WithVat * 100,
+                TotalAmount = totalAmount,
                 ReturnUrl = continueUrl
             };
 
@@ -206,6 +220,7 @@ namespace TeaCommerce.PaymentProviders.Classic
                 }
             }
 
+            
             return callbackInfo;
         }
 
