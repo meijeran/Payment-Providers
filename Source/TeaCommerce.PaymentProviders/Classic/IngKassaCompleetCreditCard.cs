@@ -166,8 +166,7 @@ namespace TeaCommerce.PaymentProviders.Classic
 
             try
             {
-                //var result = await client.PostAsync("/v1/orders/", payload);
-                var result = new HttpResponseMessage();
+                var result = await client.PostAsync("/v1/orders/", payload);                
                 var response = await result.Content.ReadAsStringAsync();
 
                 if(result.StatusCode == HttpStatusCode.BadRequest)
